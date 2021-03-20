@@ -1,14 +1,9 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
-import com.github.matheusstabile.nossocartao.proposta.validacoes.CPFouCNPJ;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
@@ -18,33 +13,37 @@ public class Proposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @CPFouCNPJ
+    @Column(nullable = false, unique = true)
     private String documento;
 
-    @NotBlank
-    @Email
+    @Column(nullable = false)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String nome;
 
-    @NotBlank
+    @Column(nullable = false)
     private String endereco;
 
-    @Positive
+    @Column(nullable = false)
     private BigDecimal salario;
 
-    @Deprecated
-    public Proposta() {
-    }
+    public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
+        Assert.isTrue(StringUtils.hasText(documento), "Documento não pode estar em branco");
+        Assert.isTrue(StringUtils.hasText(email), "Email não pode estar em branco");
+        Assert.isTrue(StringUtils.hasText(nome), "Nome não pode estar em branco");
+        Assert.isTrue(StringUtils.hasText(endereco), "Endereço não pode estar em branco");
+        Assert.isTrue(salario.compareTo(BigDecimal.ZERO) > 0, "Salário deve ser positivo");
 
-    public Proposta(@NotBlank @CPFouCNPJ String documento, @NotBlank @Email String email, @NotBlank String nome, @NotBlank String endereco, @Positive BigDecimal salario) {
         this.documento = documento;
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+    }
+
+    @Deprecated
+    public Proposta() {
     }
 
     public Long getId() {

@@ -1,0 +1,58 @@
+package com.github.matheusstabile.nossocartao.proposta.propostas;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class CadastrarPropostaControllerTest {
+
+    @Mock
+    private PropostaRepository propostaRepository;
+
+    @Mock
+    private Proposta proposta;
+
+    @Mock
+    private PropostaRequest propostaRequest;
+
+    private CadastrarPropostaController cadastrarPropostaController;
+
+    @BeforeEach
+    public void setup() {
+        cadastrarPropostaController = new CadastrarPropostaController(propostaRepository);
+    }
+
+    @Test
+    @DisplayName("Não deve cadastrar mais de uma proposta com o mesmo documento")
+    public void naoDeveCadastrarPropostaComMesmoDocumento() {
+
+        when(propostaRepository.existsByDocumento(propostaRequest.getDocumento())).thenReturn(true);
+        ResponseEntity responseEntity = cadastrarPropostaController.cadastrarProposta(propostaRequest, UriComponentsBuilder.newInstance());
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, responseEntity.getStatusCode());
+
+    }
+
+    @Test
+    @DisplayName("Deve cadastrar uma proposta")
+    public void deveCadastrarProposta() {
+
+        when(propostaRepository.existsByDocumento(propostaRequest.getDocumento())).thenReturn(false);
+        when(propostaRequest.toModel()).thenReturn(proposta);
+        when(propostaRepository.save(proposta)).thenReturn(proposta);
+        ResponseEntity responseEntity = cadastrarPropostaController.cadastrarProposta(propostaRequest, UriComponentsBuilder.newInstance());
+
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+
+    }
+}

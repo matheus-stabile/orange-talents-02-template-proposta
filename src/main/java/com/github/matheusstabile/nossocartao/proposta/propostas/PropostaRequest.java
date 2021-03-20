@@ -1,6 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
-import com.github.matheusstabile.nossocartao.proposta.validacoes.CPFouCNPJ;
+import com.github.matheusstabile.nossocartao.proposta.compartilhado.validacoes.CPFouCNPJ;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -38,5 +38,9 @@ public class PropostaRequest {
 
     public Proposta toModel() {
         return new Proposta(documento, email, nome, endereco, salario);
+    }
+
+    public String getDocumento() {
+        return documento;
     }
 }
