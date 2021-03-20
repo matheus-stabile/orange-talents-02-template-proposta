@@ -1,6 +1,7 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
 import com.github.matheusstabile.nossocartao.proposta.propostas.integracoes.AnaliseFinanceiraService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +50,7 @@ class CadastrarPropostaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve cadastrar uma proposta")
+    @DisplayName("Deve cadastrar uma proposta e retornar o location")
     public void deveCadastrarProposta() {
 
         when(propostaRepository.existsByDocumento(propostaRequest.getDocumento())).thenReturn(false);
@@ -56,7 +58,10 @@ class CadastrarPropostaControllerTest {
         when(propostaRepository.save(proposta)).thenReturn(proposta);
         ResponseEntity responseEntity = cadastrarPropostaController.cadastrarProposta(propostaRequest, UriComponentsBuilder.newInstance());
 
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        Assertions.assertAll(
+                () -> assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode()),
+                () -> assertTrue(responseEntity.getHeaders().containsKey("Location"))
+        );
 
     }
 }

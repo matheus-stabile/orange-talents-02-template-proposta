@@ -1,6 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
-import com.github.matheusstabile.nossocartao.proposta.propostas.enums.StatusProposta;
+import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -30,7 +30,10 @@ public class Proposta {
     private BigDecimal salario;
 
     @Enumerated(EnumType.STRING)
-    private StatusProposta statusProposta;
+    private PropostaStatus propostaStatus;
+
+    @OneToOne(mappedBy = "proposta", cascade = CascadeType.MERGE)
+    private Cartao cartao;
 
 
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
@@ -45,7 +48,7 @@ public class Proposta {
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
-        this.statusProposta = StatusProposta.NAO_PROCESSADO;
+        this.propostaStatus = PropostaStatus.NAO_PROCESSADO;
     }
 
     @Deprecated
@@ -64,13 +67,20 @@ public class Proposta {
         return nome;
     }
 
-    public StatusProposta getStatusProposta() {
-        return statusProposta;
+    public PropostaStatus getStatusProposta() {
+        return propostaStatus;
     }
 
-    public void atualizaStatusAnalise(StatusProposta statusProposta) {
-        Assert.isTrue(!this.statusProposta.equals(StatusProposta.ELEGIVEL), "a proposta já é elegivel");
+    public void atualizaStatusAnalise(PropostaStatus propostaStatus) {
+        Assert.isTrue(!this.propostaStatus.equals(PropostaStatus.ELEGIVEL), "a proposta já é elegivel");
 
-        this.statusProposta = statusProposta;
+        this.propostaStatus = propostaStatus;
+    }
+
+    public void associarCartao(Cartao cartao) {
+        Assert.notNull(cartao, "cartão não pode ser nulo");
+        Assert.isNull(this.cartao, "já existe um cartão associado a essa proposta");
+
+        this.cartao = cartao;
     }
 }

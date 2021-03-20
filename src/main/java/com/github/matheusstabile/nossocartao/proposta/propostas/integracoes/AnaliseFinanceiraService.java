@@ -1,9 +1,8 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas.integracoes;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
 import com.github.matheusstabile.nossocartao.proposta.propostas.PropostaRepository;
-import com.github.matheusstabile.nossocartao.proposta.propostas.enums.StatusProposta;
+import com.github.matheusstabile.nossocartao.proposta.propostas.PropostaStatus;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,7 @@ public class AnaliseFinanceiraService {
     public void analisePeriodicaDePropostasNaoProcessadas() {
 
         logger.info("[ANÁLISE FINANCEIRA] Verificando se há propostas não processadas");
-        List<Proposta> propostas = propostaRepository.findByStatusPropostaIs(StatusProposta.NAO_PROCESSADO);
+        List<Proposta> propostas = propostaRepository.findByPropostaStatusIs(PropostaStatus.NAO_PROCESSADO);
         propostas.forEach(this::processa);
     }
 
@@ -42,12 +41,12 @@ public class AnaliseFinanceiraService {
 
         try {
             AnaliseFinanceiraResponse analiseFinanceiraResponse = analiseFinanceiraClient.analiza(new AnaliseFinanceiraRequest(proposta));
-            proposta.atualizaStatusAnalise(StatusProposta.ELEGIVEL);
+            proposta.atualizaStatusAnalise(PropostaStatus.ELEGIVEL);
             propostaRepository.save(proposta);
             logger.info("[ANÁLISE FINANCEIRA] Atualizado status da proposta {} para {}", proposta.getId(), proposta.getStatusProposta());
         } catch (FeignException e) {
             if (e.status() == 422) {
-                proposta.atualizaStatusAnalise(StatusProposta.NAO_ELEGIVEL);
+                proposta.atualizaStatusAnalise(PropostaStatus.NAO_ELEGIVEL);
                 propostaRepository.save(proposta);
                 logger.info("[ANÁLISE FINANCEIRA] Atualizado status da proposta {} para {}", proposta.getId(), proposta.getStatusProposta());
 
