@@ -1,5 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
+import com.github.matheusstabile.nossocartao.proposta.propostas.integracoes.AnaliseFinanceiraService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ class CadastrarPropostaControllerTest {
     private PropostaRepository propostaRepository;
 
     @Mock
+    private AnaliseFinanceiraService analiseFinanceiraService;
+
+    @Mock
     private Proposta proposta;
 
     @Mock
@@ -29,7 +33,7 @@ class CadastrarPropostaControllerTest {
 
     @BeforeEach
     public void setup() {
-        cadastrarPropostaController = new CadastrarPropostaController(propostaRepository);
+        cadastrarPropostaController = new CadastrarPropostaController(propostaRepository, analiseFinanceiraService);
     }
 
     @Test

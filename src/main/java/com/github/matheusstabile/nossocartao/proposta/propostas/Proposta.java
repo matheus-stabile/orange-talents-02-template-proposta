@@ -1,5 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
+import com.github.matheusstabile.nossocartao.proposta.propostas.enums.StatusProposta;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +29,10 @@ public class Proposta {
     @Column(nullable = false)
     private BigDecimal salario;
 
+    @Enumerated(EnumType.STRING)
+    private StatusProposta statusProposta;
+
+
     public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
         Assert.isTrue(StringUtils.hasText(documento), "Documento não pode estar em branco");
         Assert.isTrue(StringUtils.hasText(email), "Email não pode estar em branco");
@@ -40,6 +45,7 @@ public class Proposta {
         this.nome = nome;
         this.endereco = endereco;
         this.salario = salario;
+        this.statusProposta = StatusProposta.NAO_PROCESSADO;
     }
 
     @Deprecated
@@ -48,5 +54,23 @@ public class Proposta {
 
     public Long getId() {
         return id;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public StatusProposta getStatusProposta() {
+        return statusProposta;
+    }
+
+    public void atualizaStatusAnalise(StatusProposta statusProposta) {
+        Assert.isTrue(!this.statusProposta.equals(StatusProposta.ELEGIVEL), "a proposta já é elegivel");
+
+        this.statusProposta = statusProposta;
     }
 }
