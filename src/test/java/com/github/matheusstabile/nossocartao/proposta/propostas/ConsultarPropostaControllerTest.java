@@ -31,7 +31,6 @@ class ConsultarPropostaControllerTest {
     @BeforeEach
     void setup() {
         consultarPropostaController = new ConsultarPropostaController(propostaRepository);
-//        propostaValida = new Proposta("11111111111", "user@email.com", "nome", "endereco", BigDecimal.ONE);
     }
 
     @Test

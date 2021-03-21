@@ -44,6 +44,6 @@ public class CadastrarPropostaController {
         analiseFinanceiraService.processa(proposta);
         propostaRepository.save(proposta);
 
-        return ResponseEntity.created(uri.path("/propostas/{id}").buildAndExpand(proposta.getId()).toUri()).build();
+        return ResponseEntity.created(uri.path("/{id}").buildAndExpand(proposta.getId()).toUri()).build();
     }
 }
