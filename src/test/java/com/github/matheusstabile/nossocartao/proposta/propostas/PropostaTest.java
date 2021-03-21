@@ -23,12 +23,21 @@ class PropostaTest {
 
 
     @Test
-    @DisplayName("Nao deve atualizar status de propostas que ja sao elegiveis")
+    @DisplayName("Nao deve atualizar status da propostas se já for elegivel")
     void naoDeveAtualizarStatusDePropostaElegivel() {
 
         propostaValida.atualizaStatusAnalise(PropostaStatus.ELEGIVEL);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> propostaValida.atualizaStatusAnalise(PropostaStatus.NAO_ELEGIVEL));
+    }
+
+    @Test
+    @DisplayName("Deve atualizar status da proposta")
+    void deveAtualizarStatusDePropostas() {
+
+        propostaValida.atualizaStatusAnalise(PropostaStatus.NAO_ELEGIVEL);
+
+        Assertions.assertEquals(PropostaStatus.NAO_ELEGIVEL, propostaValida.getStatusProposta());
     }
 
     @Test
@@ -39,10 +48,28 @@ class PropostaTest {
     }
 
     @Test
+    @DisplayName("Deve associar cartão valido")
+    void deveAssociarUmCartao() {
+
+        propostaValida.associarCartao(cartaoValido);
+
+        Assertions.assertEquals(cartaoValido, propostaValida.getCartao());
+    }
+
+    @Test
     @DisplayName("Nao deve associar um novo cartão se a proposta já tiver cartão associado")
     void naoDeveAssociarNovoCartaoSeAPropostaJaTiverCartaoAssociado() {
 
         propostaValida.associarCartao(cartaoValido);
         Assertions.assertThrows(IllegalArgumentException.class, () -> propostaValida.associarCartao(cartaoValido));
+    }
+
+    @Test
+    @DisplayName("Deve associar um novo cartão se a proposta não tiver cartão associado")
+    void naoDeveAssociarNovoCartaoSeAPropostaNaoTiverCartaoAssociado() {
+
+        propostaValida.associarCartao(cartaoValido);
+
+        Assertions.assertEquals(cartaoValido, propostaValida.getCartao());
     }
 }

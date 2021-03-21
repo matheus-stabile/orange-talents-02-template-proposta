@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CartaoServiceTest {
 
@@ -29,5 +29,4 @@ class CartaoServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> cartaoService.buscarCartao(null));
     }
-
 }

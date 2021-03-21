@@ -47,6 +47,10 @@ public class Cartao {
         return id;
     }
 
+    public Proposta getProposta() {
+        return proposta;
+    }
+
     public void associarProposta(Proposta proposta) {
         Assert.notNull(proposta, "a proposta não pode ser nula");
         this.proposta = proposta;

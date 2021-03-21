@@ -71,6 +71,14 @@ public class Proposta {
         return propostaStatus;
     }
 
+    public Cartao getCartao() {
+        return cartao;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     public void atualizaStatusAnalise(PropostaStatus propostaStatus) {
         Assert.isTrue(!this.propostaStatus.equals(PropostaStatus.ELEGIVEL), "a proposta já é elegivel");
 
