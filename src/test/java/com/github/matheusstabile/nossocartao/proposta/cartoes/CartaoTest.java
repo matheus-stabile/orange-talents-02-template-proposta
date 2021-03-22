@@ -1,12 +1,12 @@
 package com.github.matheusstabile.nossocartao.proposta.cartoes;
 
 import com.github.matheusstabile.nossocartao.proposta.biometrias.Biometria;
+import com.github.matheusstabile.nossocartao.proposta.bloqueios.Bloqueio;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,12 +22,15 @@ class CartaoTest {
 
     Biometria biometriaValida;
 
+    Bloqueio bloqueioValido;
+
 
     @BeforeEach
     void setup() {
         cartaoValido = new Cartao("numero", LocalDateTime.parse("2021-03-20T20:08:43.777489"), "titular", BigDecimal.ONE);
         propostaValida = new Proposta("documento", "email", "nome", "endereco", BigDecimal.ONE);
         biometriaValida = new Biometria("digital");
+        bloqueioValido = new Bloqueio("ip", "useragent");
 
     }
 
@@ -63,4 +66,22 @@ class CartaoTest {
         Assertions.assertTrue(cartaoValido.getBiometrias().contains(biometriaValida));
     }
 
+    @Test
+    @DisplayName("Não deve adicionar bloqueio se for nulo")
+    void naoDeveAdicionarBloqueioNulo() {
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> cartaoValido.adicionarBloqueio(null));
+    }
+
+    @Test
+    @DisplayName("Deve adicionar bloqueio")
+    void deveAdicionarBloqueio() {
+
+        cartaoValido.adicionarBloqueio(bloqueioValido);
+
+        Assertions.assertAll(
+                () -> Assertions.assertTrue(cartaoValido.getBloqueios().contains(bloqueioValido)),
+                () -> Assertions.assertEquals(CartaoStatus.BLOQUEADO, cartaoValido.getStatus())
+        );
+    }
 }

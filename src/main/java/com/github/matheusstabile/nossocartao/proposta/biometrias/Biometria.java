@@ -1,6 +1,8 @@
 package com.github.matheusstabile.nossocartao.proposta.biometrias;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +26,8 @@ public class Biometria {
     }
 
     public Biometria(@NotNull String digital) {
+        Assert.isTrue(StringUtils.hasText(digital), "digital não pode estar em branco");
+
         this.digital = Base64.encodeBase64(digital.getBytes());
     }
 
