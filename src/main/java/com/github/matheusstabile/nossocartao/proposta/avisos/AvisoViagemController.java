@@ -1,47 +1,49 @@
-package com.github.matheusstabile.nossocartao.proposta.bloqueios;
+package com.github.matheusstabile.nossocartao.proposta.avisos;
 
 import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
 import com.github.matheusstabile.nossocartao.proposta.cartoes.integracoes.CartaoClient;
 import com.github.matheusstabile.nossocartao.proposta.compartilhado.exceptions.ErroPadronizado;
 import com.github.matheusstabile.nossocartao.proposta.compartilhado.validacoes.InformacoesObrigatorias;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-public class BloqueioController {
+public class AvisoViagemController {
 
     private final EntityManager entityManager;
-    private final BloqueioService bloqueioService;
-    private final Logger logger = LoggerFactory.getLogger(BloqueioController.class);
+    private final AvisoViagemService avisoViagemService;
+    private final Logger logger = LoggerFactory.getLogger(AvisoViagemController.class);
 
     @Autowired
-    public BloqueioController(EntityManager entityManager, BloqueioService bloqueioService) {
+    public AvisoViagemController(EntityManager entityManager, AvisoViagemService avisoViagemService) {
         this.entityManager = entityManager;
-        this.bloqueioService = bloqueioService;
+        this.avisoViagemService = avisoViagemService;
     }
 
-    @PostMapping("/cartoes/{idCartao}/bloquear")
+    @PostMapping("/cartoes/{id}/aviso-viagem")
     @Transactional
-    public ResponseEntity<?> adicionarBloqueio(@PathVariable("idCartao") Long idCartao, @InformacoesObrigatorias HttpServletRequest request) {
-        Optional<Cartao> cartaoOptional = Optional.ofNullable(entityManager.find(Cartao.class, idCartao));
+    public ResponseEntity<?> avisarViagem(@PathVariable("id") Long id, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, @InformacoesObrigatorias HttpServletRequest request) {
+        Optional<Cartao> cartaoOptional = Optional.ofNullable(entityManager.find(Cartao.class, id));
 
         if (cartaoOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroPadronizado(Map.of("cartao", "não encontrado")));
 
-        Cartao cartao = cartaoOptional.get();
-
-        return bloqueioService.bloqueia(cartao, request);
+        return avisoViagemService.avisaViagem(cartaoOptional.get(), avisoViagemRequest, request);
     }
 }

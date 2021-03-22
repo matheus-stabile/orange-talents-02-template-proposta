@@ -1,5 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.cartoes;
 
+import com.github.matheusstabile.nossocartao.proposta.avisos.AvisoViagem;
 import com.github.matheusstabile.nossocartao.proposta.biometrias.Biometria;
 import com.github.matheusstabile.nossocartao.proposta.bloqueios.Bloqueio;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
@@ -24,6 +25,8 @@ class CartaoTest {
 
     Bloqueio bloqueioValido;
 
+    AvisoViagem avisoViagemValido;
+
 
     @BeforeEach
     void setup() {
@@ -31,6 +34,7 @@ class CartaoTest {
         propostaValida = new Proposta("documento", "email", "nome", "endereco", BigDecimal.ONE);
         biometriaValida = new Biometria("digital");
         bloqueioValido = new Bloqueio("ip", "useragent");
+        avisoViagemValido = new AvisoViagem("ip", "useragent");
 
     }
 
@@ -83,5 +87,21 @@ class CartaoTest {
                 () -> Assertions.assertTrue(cartaoValido.getBloqueios().contains(bloqueioValido)),
                 () -> Assertions.assertEquals(CartaoStatus.BLOQUEADO, cartaoValido.getStatus())
         );
+    }
+
+    @Test
+    @DisplayName("Não deve adicionar aviso de viagem se for nulo")
+    void naoDeveAdicionarAvisoDeViagemNulo() {
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> cartaoValido.adicionarAviso(null));
+    }
+
+    @Test
+    @DisplayName("Deve adicionar aviso de viagem")
+    void deveAdicionarAvisoDeViagem() {
+
+        cartaoValido.adicionarAviso(avisoViagemValido);
+
+        Assertions.assertTrue(cartaoValido.getAvisos().contains(avisoViagemValido));
     }
 }

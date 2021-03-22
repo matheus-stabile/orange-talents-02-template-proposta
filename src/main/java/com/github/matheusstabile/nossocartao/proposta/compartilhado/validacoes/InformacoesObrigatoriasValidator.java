@@ -1,5 +1,7 @@
 package com.github.matheusstabile.nossocartao.proposta.compartilhado.validacoes;
 
+import org.springframework.util.Assert;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,6 +15,7 @@ public class InformacoesObrigatoriasValidator implements ConstraintValidator<Inf
 
     @Override
     public boolean isValid(HttpServletRequest value, ConstraintValidatorContext context) {
+        Assert.notNull(value, "header nao pode ser nulo");
         return !value.getRemoteAddr().isBlank() && !value.getHeader("User-Agent").isBlank();
     }
 }

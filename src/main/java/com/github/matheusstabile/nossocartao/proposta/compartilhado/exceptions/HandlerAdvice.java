@@ -1,5 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.compartilhado.exceptions;
 
+import feign.FeignException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -47,5 +48,4 @@ public class HandlerAdvice {
 
         return ResponseEntity.status(exception.getStatus()).body(erroPadronizado);
     }
-
 }

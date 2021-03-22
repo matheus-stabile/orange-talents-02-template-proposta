@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,18 @@ class BiometriaControllerTest {
 
     private BiometriaController biometriaController;
 
-    Cartao cartaoValido;
-
     @Mock
     EntityManager entityManager;
 
     @Mock
     BiometriaRequest biometriaRequest;
 
+    @Mock
+    Cartao cartao;
+
     @BeforeEach
     void setup() {
         biometriaController = new BiometriaController(entityManager);
-        cartaoValido = new Cartao("numero", LocalDateTime.parse("2021-03-20T20:08:43.777489"), "titular", BigDecimal.ONE);
-
     }
 
     @Test
@@ -55,17 +55,15 @@ class BiometriaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve criar biometria")
-    void deveCriarBiometria() {
+    @DisplayName("Deve criar biometria se as precondições forem válidas")
+    void deveCriarBiometriaSePrecondicoesForemValidas() {
 
-        when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(cartaoValido);
+        when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(cartao);
         when(biometriaRequest.toModel()).thenReturn(new Biometria());
 
         ResponseEntity responseEntity = biometriaController.adicionaBiometria(1L, biometriaRequest, UriComponentsBuilder.newInstance());
 
-        assertAll(
-                () -> assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode()),
-                () -> assertTrue(responseEntity.getHeaders().containsKey("Location"))
-        );
+        Mockito.verify(cartao).adicionaBiometria(biometriaRequest.toModel());
+
     }
 }

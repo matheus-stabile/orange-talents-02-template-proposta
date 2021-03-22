@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -28,9 +27,7 @@ public class BloqueioService {
         this.cartaoClient = cartaoClient;
     }
 
-
     public ResponseEntity<?> bloqueia(Cartao cartao, HttpServletRequest request) {
-        Assert.notNull(cartao, "cartão não pode ser nulo");
 
         if (cartao.estaBloqueado()) {
             logger.error("[BLOQUEIO DE CARTÃO] O cartão já está bloqueado, id: {}", cartao.getId());

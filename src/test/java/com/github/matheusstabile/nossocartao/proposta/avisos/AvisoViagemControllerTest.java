@@ -1,4 +1,4 @@
-package com.github.matheusstabile.nossocartao.proposta.bloqueios;
+package com.github.matheusstabile.nossocartao.proposta.avisos;
 
 import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
 import com.github.matheusstabile.nossocartao.proposta.compartilhado.exceptions.ErroPadronizado;
@@ -20,25 +20,28 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BloqueioControllerTest {
+class AvisoViagemControllerTest {
 
-    BloqueioController bloqueioController;
+    AvisoViagemController avisoViagemController;
 
     @Mock
     EntityManager entityManager;
 
     @Mock
-    BloqueioService bloqueioService;
+    AvisoViagemService avisoViagemService;
 
     @Mock
-    Cartao cartaoValido;
+    AvisoViagemRequest avisoViagemRequest;
+
+    @Mock
+    Cartao cartao;
 
     @Mock
     HttpServletRequest httpServletRequest;
 
     @BeforeEach
     void setup() {
-        bloqueioController = new BloqueioController(entityManager, bloqueioService);
+        avisoViagemController = new AvisoViagemController(entityManager, avisoViagemService);
     }
 
     @Test
@@ -47,7 +50,7 @@ class BloqueioControllerTest {
 
         when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(null);
 
-        ResponseEntity responseEntity = bloqueioController.adicionarBloqueio(1L, httpServletRequest);
+        ResponseEntity responseEntity = avisoViagemController.avisarViagem(1L, avisoViagemRequest, httpServletRequest);
 
         assertAll(
                 () -> assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode()),
@@ -56,13 +59,13 @@ class BloqueioControllerTest {
     }
 
     @Test
-    @DisplayName("Deve processar bloqueio de cartao se as precondições forem válidas")
-    void ddeveProcessarBloqueioDeCartaoSeAsPrecondicoesForemValidas() {
+    @DisplayName("Deve processar aviso de viagem se as precondições forem válidas")
+    void deveProcessarAvisoDeViagemSeAsPrecondicoesForemValidas() {
 
-        when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(cartaoValido);
+        when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(cartao);
 
-        ResponseEntity responseEntity = bloqueioController.adicionarBloqueio(1L, httpServletRequest);
+        ResponseEntity responseEntity = avisoViagemController.avisarViagem(1L, avisoViagemRequest, httpServletRequest);
 
-        Mockito.verify(bloqueioService).bloqueia(cartaoValido, httpServletRequest);
+        Mockito.verify(avisoViagemService).avisaViagem(cartao, avisoViagemRequest, httpServletRequest);
     }
 }

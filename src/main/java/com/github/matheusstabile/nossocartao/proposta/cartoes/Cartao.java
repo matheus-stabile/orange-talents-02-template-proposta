@@ -1,5 +1,6 @@
 package com.github.matheusstabile.nossocartao.proposta.cartoes;
 
+import com.github.matheusstabile.nossocartao.proposta.avisos.AvisoViagem;
 import com.github.matheusstabile.nossocartao.proposta.biometrias.Biometria;
 import com.github.matheusstabile.nossocartao.proposta.bloqueios.Bloqueio;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
@@ -46,6 +47,9 @@ public class Cartao {
     @OneToMany
     private Set<Bloqueio> bloqueios = new HashSet<>();
 
+    @OneToMany
+    private Set<AvisoViagem> avisos = new HashSet<>();
+
     @Deprecated
     public Cartao() {
     }
@@ -79,12 +83,28 @@ public class Cartao {
         return proposta;
     }
 
+    public LocalDateTime getEmitidoEm() {
+        return emitidoEm;
+    }
+
+    public String getTitular() {
+        return titular;
+    }
+
+    public BigDecimal getLimite() {
+        return limite;
+    }
+
     public Set<Biometria> getBiometrias() {
         return biometrias;
     }
 
     public Set<Bloqueio> getBloqueios() {
         return bloqueios;
+    }
+
+    public Set<AvisoViagem> getAvisos() {
+        return avisos;
     }
 
     public void associarProposta(Proposta proposta) {
@@ -105,5 +125,11 @@ public class Cartao {
         Assert.notNull(bloqueio, "bloqueio não pode ser nulo");
         this.bloqueios.add(bloqueio);
         this.status = CartaoStatus.BLOQUEADO;
+    }
+
+    public void adicionarAviso(AvisoViagem avisoViagem) {
+        Assert.notNull(avisoViagem, "aviso de viagem não pode ser nulo");
+
+        this.avisos.add(avisoViagem);
     }
 }

@@ -20,18 +20,18 @@ import static org.mockito.Mockito.when;
 class CadastrarPropostaControllerTest {
 
     @Mock
-    private PropostaRepository propostaRepository;
+    PropostaRepository propostaRepository;
 
     @Mock
-    private AnaliseFinanceiraService analiseFinanceiraService;
+    AnaliseFinanceiraService analiseFinanceiraService;
 
     @Mock
-    private Proposta proposta;
+    Proposta proposta;
 
     @Mock
-    private PropostaRequest propostaRequest;
+    PropostaRequest propostaRequest;
 
-    private CadastrarPropostaController cadastrarPropostaController;
+    CadastrarPropostaController cadastrarPropostaController;
 
     @BeforeEach
     public void setup() {
