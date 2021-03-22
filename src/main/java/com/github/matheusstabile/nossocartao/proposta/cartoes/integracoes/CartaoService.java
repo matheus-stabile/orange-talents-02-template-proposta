@@ -30,7 +30,7 @@ public class CartaoService {
 
     @Scheduled(fixedDelayString = "${analiseCartaoService.analisePeriodica.delay}")
     public void analisePeriodicaDePropostasElegiveisSemCartao() {
-        logger.info("[ANÁLISE CARTÃO] Verificando se há propostas elegiveis e sem cartão");
+//        logger.info("[ANÁLISE CARTÃO] Verificando se há propostas elegiveis e sem cartão");
         List<Proposta> propostas = propostaRepository.findByPropostaStatusIsAndCartaoIdIsNull(PropostaStatus.ELEGIVEL);
         propostas.forEach(this::buscarCartao);
     }

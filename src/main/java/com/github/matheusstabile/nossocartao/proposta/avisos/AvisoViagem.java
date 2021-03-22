@@ -1,13 +1,11 @@
 package com.github.matheusstabile.nossocartao.proposta.avisos;
 
+import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -27,16 +25,22 @@ public class AvisoViagem {
     @NotNull
     private String userAgent;
 
+    @NotNull
+    @ManyToOne
+    private Cartao cartao;
+
     @Deprecated
     public AvisoViagem() {
     }
 
-    public AvisoViagem(@NotNull String ipCliente, @NotNull String userAgent) {
+    public AvisoViagem(@NotNull String ipCliente, @NotNull String userAgent, Cartao cartao) {
         Assert.state(StringUtils.hasText(ipCliente), "ipCliente não pode estar em branco");
         Assert.state(StringUtils.hasText(userAgent), "userAgent não pode estar em branco");
+        Assert.notNull(cartao, "cartão não pode ser nulo");
 
         this.ipCliente = ipCliente;
         this.userAgent = userAgent;
+        this.cartao = cartao;
     }
 
     public Long getId() {

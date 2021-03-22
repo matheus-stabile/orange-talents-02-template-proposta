@@ -1,4 +1,4 @@
-package com.github.matheusstabile.nossocartao.proposta.bloqueios;
+package com.github.matheusstabile.nossocartao.proposta.carteiras;
 
 import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,39 +10,45 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-public class Bloqueio {
+public class Carteira {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreationTimestamp
-    private LocalDateTime instante;
+    private LocalDateTime dataCriacao;
 
     @NotNull
-    private String ipCliente;
+    private String email;
 
     @NotNull
-    private String userAgent;
+    @Enumerated(EnumType.STRING)
+    private TipoCarteira tipo;
 
     @NotNull
     @ManyToOne
     private Cartao cartao;
 
     @Deprecated
-    public Bloqueio() {
+    public Carteira() {
     }
 
-    public Bloqueio(@NotNull String ipCliente, @NotNull String userAgent, @NotNull Cartao cartao) {
-        Assert.isTrue(StringUtils.hasText(ipCliente), "ip do cliente não pode estar em branco");
-        Assert.isTrue(StringUtils.hasText(userAgent), "user agent não pode estar em branco");
+    public Carteira(@NotNull String email, @NotNull TipoCarteira tipo, @NotNull Cartao cartao) {
         Assert.notNull(cartao, "cartão não pode ser nulo");
+        Assert.isTrue(StringUtils.hasText(email), "email não pode estar em branco");
+        Assert.notNull(tipo, "tipo da carteira não pode ser nulo");
 
-        this.ipCliente = ipCliente;
-        this.userAgent = userAgent;
+        this.email = email;
+        this.tipo = tipo;
         this.cartao = cartao;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public TipoCarteira getTipo() {
+        return tipo;
     }
 }

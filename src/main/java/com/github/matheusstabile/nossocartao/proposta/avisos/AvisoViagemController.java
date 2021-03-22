@@ -28,7 +28,6 @@ public class AvisoViagemController {
 
     private final EntityManager entityManager;
     private final AvisoViagemService avisoViagemService;
-    private final Logger logger = LoggerFactory.getLogger(AvisoViagemController.class);
 
     @Autowired
     public AvisoViagemController(EntityManager entityManager, AvisoViagemService avisoViagemService) {
@@ -36,10 +35,10 @@ public class AvisoViagemController {
         this.avisoViagemService = avisoViagemService;
     }
 
-    @PostMapping("/cartoes/{id}/aviso-viagem")
+    @PostMapping("/cartoes/{idCartao}/aviso-viagem")
     @Transactional
-    public ResponseEntity<?> avisarViagem(@PathVariable("id") Long id, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, @InformacoesObrigatorias HttpServletRequest request) {
-        Optional<Cartao> cartaoOptional = Optional.ofNullable(entityManager.find(Cartao.class, id));
+    public ResponseEntity<?> avisarViagem(@PathVariable("idCartao") Long idCartao, @RequestBody @Valid AvisoViagemRequest avisoViagemRequest, @InformacoesObrigatorias HttpServletRequest request) {
+        Optional<Cartao> cartaoOptional = Optional.ofNullable(entityManager.find(Cartao.class, idCartao));
 
         if (cartaoOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroPadronizado(Map.of("cartao", "não encontrado")));

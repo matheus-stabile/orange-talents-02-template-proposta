@@ -59,11 +59,11 @@ class BiometriaControllerTest {
     void deveCriarBiometriaSePrecondicoesForemValidas() {
 
         when(entityManager.find(ArgumentMatchers.any(), ArgumentMatchers.any(Long.class))).thenReturn(cartao);
-        when(biometriaRequest.toModel()).thenReturn(new Biometria());
+        when(biometriaRequest.toModel(cartao)).thenReturn(new Biometria());
 
         ResponseEntity responseEntity = biometriaController.adicionaBiometria(1L, biometriaRequest, UriComponentsBuilder.newInstance());
 
-        Mockito.verify(cartao).adicionaBiometria(biometriaRequest.toModel());
+        Mockito.verify(cartao).adicionaBiometria(biometriaRequest.toModel(cartao));
 
     }
 }

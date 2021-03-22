@@ -30,7 +30,7 @@ public class AnaliseFinanceiraService {
     @Scheduled(fixedDelayString = "${analiseFinanceiraService.analisePeriodica.delay}")
     public void analisePeriodicaDePropostasNaoProcessadas() {
 
-        logger.info("[ANÁLISE FINANCEIRA] Verificando se há propostas não processadas");
+//        logger.info("[ANÁLISE FINANCEIRA] Verificando se há propostas não processadas");
         List<Proposta> propostas = propostaRepository.findByPropostaStatusIs(PropostaStatus.NAO_PROCESSADO);
         propostas.forEach(this::processa);
     }

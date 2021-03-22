@@ -15,7 +15,6 @@ public class InformacoesObrigatoriasValidator implements ConstraintValidator<Inf
 
     @Override
     public boolean isValid(HttpServletRequest value, ConstraintValidatorContext context) {
-        Assert.notNull(value, "header nao pode ser nulo");
         return !value.getRemoteAddr().isBlank() && !value.getHeader("User-Agent").isBlank();
     }
 }

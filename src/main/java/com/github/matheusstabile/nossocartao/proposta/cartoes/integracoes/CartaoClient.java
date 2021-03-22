@@ -1,6 +1,7 @@
 package com.github.matheusstabile.nossocartao.proposta.cartoes.integracoes;
 
 import com.github.matheusstabile.nossocartao.proposta.avisos.AvisoViagemRequest;
+import com.github.matheusstabile.nossocartao.proposta.carteiras.CarteiraRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,4 +19,7 @@ public interface CartaoClient {
 
     @PostMapping("/api/cartoes/{idCartao}/avisos")
     ResponseEntity informaViagem(@PathVariable String idCartao, @RequestBody AvisoViagemRequest avisoViagemRequest);
+
+    @PostMapping("/api/cartoes/{idCartao}/carteiras")
+    ResponseEntity associaCarteira(@RequestBody Map carteiraRequest, @PathVariable String idCartao);
 }

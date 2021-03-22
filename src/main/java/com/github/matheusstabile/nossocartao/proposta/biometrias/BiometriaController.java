@@ -36,7 +36,7 @@ public class BiometriaController {
         if (cartaoOptional.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroPadronizado(Map.of("cartao", "não encontrado")));
 
-        Biometria biometria = biometriaRequest.toModel();
+        Biometria biometria = biometriaRequest.toModel(cartaoOptional.get());
         entityManager.persist(biometria);
 
         Cartao cartao = cartaoOptional.get();

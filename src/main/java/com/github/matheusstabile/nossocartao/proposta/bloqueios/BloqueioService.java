@@ -37,7 +37,7 @@ public class BloqueioService {
         try {
             Map bloqueioRequest = Map.of("sistemaResponsavel", "${spring.application.name}");
             cartaoClient.bloqueiaCartao(cartao.getNumero(), bloqueioRequest);
-            Bloqueio bloqueio = new Bloqueio(request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Bloqueio bloqueio = new Bloqueio(request.getRemoteAddr(), request.getHeader("User-Agent"), cartao);
             entityManager.persist(bloqueio);
             cartao.adicionarBloqueio(bloqueio);
             entityManager.merge(cartao);

@@ -3,6 +3,8 @@ package com.github.matheusstabile.nossocartao.proposta.cartoes;
 import com.github.matheusstabile.nossocartao.proposta.avisos.AvisoViagem;
 import com.github.matheusstabile.nossocartao.proposta.biometrias.Biometria;
 import com.github.matheusstabile.nossocartao.proposta.bloqueios.Bloqueio;
+import com.github.matheusstabile.nossocartao.proposta.carteiras.Carteira;
+import com.github.matheusstabile.nossocartao.proposta.carteiras.TipoCarteira;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -41,14 +43,17 @@ public class Cartao {
     @OneToOne
     private Proposta proposta;
 
-    @OneToMany
+    @OneToMany(mappedBy = "cartao")
     private Set<Biometria> biometrias = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "cartao")
     private Set<Bloqueio> bloqueios = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "cartao")
     private Set<AvisoViagem> avisos = new HashSet<>();
+
+    @OneToMany(mappedBy = "cartao")
+    private Set<Carteira> carteiras = new HashSet<>();
 
     @Deprecated
     public Cartao() {
@@ -107,6 +112,10 @@ public class Cartao {
         return avisos;
     }
 
+    public Set<Carteira> getCarteiras() {
+        return carteiras;
+    }
+
     public void associarProposta(Proposta proposta) {
         Assert.notNull(proposta, "a proposta não pode ser nula");
         this.proposta = proposta;
@@ -131,5 +140,17 @@ public class Cartao {
         Assert.notNull(avisoViagem, "aviso de viagem não pode ser nulo");
 
         this.avisos.add(avisoViagem);
+    }
+
+    public boolean temCarteira(TipoCarteira tipoCarteira) {
+        Assert.notNull(tipoCarteira, "tipo de carteira não pode ser nulo");
+
+        return carteiras.stream().anyMatch(carteira -> carteira.getTipo().equals(tipoCarteira));
+    }
+
+    public void adicionaCarteira(Carteira carteira) {
+        Assert.notNull(carteira, "carteira não pode ser nula");
+
+        this.carteiras.add(carteira);
     }
 }

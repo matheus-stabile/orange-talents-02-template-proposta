@@ -29,7 +29,7 @@ public class AvisoViagemService {
 
         try {
             ResponseEntity response = cartaoClient.informaViagem(cartao.getNumero(), avisoViagemRequest);
-            AvisoViagem avisoViagem = new AvisoViagem(request.getRemoteAddr(), request.getHeader("user-Agent"));
+            AvisoViagem avisoViagem = new AvisoViagem(request.getRemoteAddr(), request.getHeader("user-Agent"), cartao);
             entityManager.persist(avisoViagem);
 
             cartao.adicionarAviso(avisoViagem);
