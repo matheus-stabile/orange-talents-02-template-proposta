@@ -1,6 +1,8 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
 import com.github.matheusstabile.nossocartao.proposta.propostas.integracoes.AnaliseFinanceiraService;
+import io.opentracing.Span;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +24,22 @@ public class CadastrarPropostaController {
     private final PropostaRepository propostaRepository;
     private final AnaliseFinanceiraService analiseFinanceiraService;
     private final Logger logger = LoggerFactory.getLogger(CadastrarPropostaController.class);
+    private final Tracer tracer;
 
     @Autowired
-    public CadastrarPropostaController(PropostaRepository propostaRepository, AnaliseFinanceiraService analiseFinanceiraService) {
+    public CadastrarPropostaController(PropostaRepository propostaRepository, AnaliseFinanceiraService analiseFinanceiraService, Tracer tracer) {
         this.propostaRepository = propostaRepository;
         this.analiseFinanceiraService = analiseFinanceiraService;
+        this.tracer = tracer;
     }
 
     @PostMapping
     @Transactional
     ResponseEntity cadastrarProposta(@RequestBody @Valid PropostaRequest propostaRequest, UriComponentsBuilder uri) {
+        tracer.activeSpan().setTag("user.email", propostaRequest.getEmail());
+        tracer.activeSpan().setBaggageItem("user.email", propostaRequest.getEmail());
+        tracer.activeSpan().log("Cadastro de nova proposta");
+
         if (propostaRepository.existsByDocumento(propostaRequest.getDocumento())) {
             logger.error("[CRIAÇÃO DE PROPOSTA] Documento já está em uso");
             return ResponseEntity.unprocessableEntity().body(Map.of("documento", "já está em uso"));

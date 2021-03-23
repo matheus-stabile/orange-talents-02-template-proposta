@@ -1,6 +1,7 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
 import com.github.matheusstabile.nossocartao.proposta.propostas.integracoes.AnaliseFinanceiraService;
+import io.opentracing.Tracer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,9 @@ class CadastrarPropostaControllerTest {
     AnaliseFinanceiraService analiseFinanceiraService;
 
     @Mock
+    Tracer tracer;
+
+    @Mock
     Proposta proposta;
 
     @Mock
@@ -35,7 +39,7 @@ class CadastrarPropostaControllerTest {
 
     @BeforeEach
     public void setup() {
-        cadastrarPropostaController = new CadastrarPropostaController(propostaRepository, analiseFinanceiraService);
+        cadastrarPropostaController = new CadastrarPropostaController(propostaRepository, analiseFinanceiraService, tracer);
     }
 
     @Test
