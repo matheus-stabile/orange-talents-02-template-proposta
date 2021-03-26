@@ -6,6 +6,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -19,10 +20,12 @@ public class AvisoViagem {
     @CreationTimestamp
     private LocalDateTime instante;
 
-    @NotNull
+    @NotBlank
+    @Column(nullable = false)
     private String ipCliente;
 
-    @NotNull
+    @NotBlank
+    @Column(nullable = false)
     private String userAgent;
 
     @NotNull
@@ -34,10 +37,6 @@ public class AvisoViagem {
     }
 
     public AvisoViagem(@NotNull String ipCliente, @NotNull String userAgent, Cartao cartao) {
-        Assert.state(StringUtils.hasText(ipCliente), "ipCliente não pode estar em branco");
-        Assert.state(StringUtils.hasText(userAgent), "userAgent não pode estar em branco");
-        Assert.notNull(cartao, "cartão não pode ser nulo");
-
         this.ipCliente = ipCliente;
         this.userAgent = userAgent;
         this.cartao = cartao;

@@ -1,11 +1,11 @@
 package com.github.matheusstabile.nossocartao.proposta.bloqueios;
 
 import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
+import com.github.matheusstabile.nossocartao.proposta.cartoes.integracoes.CartaoClient;
 import com.github.matheusstabile.nossocartao.proposta.compartilhado.seguranca.JwtDecoder;
 import com.github.matheusstabile.nossocartao.proposta.compartilhado.validacoes.InformacoesObrigatorias;
+import feign.FeignException;
 import io.opentracing.Tracer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +17,20 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 public class BloqueioController {
 
     private final EntityManager entityManager;
-    private final BloqueioService bloqueioService;
-    private final Logger logger = LoggerFactory.getLogger(BloqueioController.class);
+    private final CartaoClient cartaoClient;
     private final Tracer tracer;
 
     @Autowired
-    public BloqueioController(EntityManager entityManager, BloqueioService bloqueioService, Tracer tracer) {
+    public BloqueioController(EntityManager entityManager, CartaoClient cartaoClient, Tracer tracer) {
         this.entityManager = entityManager;
-        this.bloqueioService = bloqueioService;
+        this.cartaoClient = cartaoClient;
         this.tracer = tracer;
     }
 
@@ -53,6 +53,20 @@ public class BloqueioController {
         if (!cartao.pertenceAoUsuario(token))
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cartão não pertence ao usuário logado");
 
-        return bloqueioService.bloqueia(cartao, request);
+        if (cartao.estaBloqueado())
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "cartão já está bloqueado");
+
+        try {
+            Map bloqueioRequest = Map.of("sistemaResponsavel", "${spring.application.name}");
+            cartaoClient.bloqueiaCartao(cartao.getNumero(), bloqueioRequest);
+            Bloqueio bloqueio = new Bloqueio(request.getRemoteAddr(), request.getHeader("User-Agent"), cartao);
+            entityManager.persist(bloqueio);
+            cartao.adicionarBloqueio(bloqueio);
+            entityManager.merge(cartao);
+        } catch (FeignException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Falha de comunicação com a operadora do cartão");
+        }
+
+        return ResponseEntity.ok().build();
     }
 }
