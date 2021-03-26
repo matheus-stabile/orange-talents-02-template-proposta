@@ -26,3 +26,4 @@ public @interface CPFouCNPJ {
 
     Class<? extends Payload>[] payload() default {};
 }
+

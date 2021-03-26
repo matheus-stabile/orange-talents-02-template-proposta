@@ -5,6 +5,7 @@ import com.github.matheusstabile.nossocartao.proposta.biometrias.Biometria;
 import com.github.matheusstabile.nossocartao.proposta.bloqueios.Bloqueio;
 import com.github.matheusstabile.nossocartao.proposta.carteiras.Carteira;
 import com.github.matheusstabile.nossocartao.proposta.carteiras.TipoCarteira;
+import com.github.matheusstabile.nossocartao.proposta.compartilhado.seguranca.JwtDecoder;
 import com.github.matheusstabile.nossocartao.proposta.propostas.Proposta;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -152,5 +153,10 @@ public class Cartao {
         Assert.notNull(carteira, "carteira não pode ser nula");
 
         this.carteiras.add(carteira);
+    }
+
+    public boolean pertenceAoUsuario(String token) {
+        Assert.isTrue(StringUtils.hasText(token), "token não pode estar em branco");
+        return this.getProposta().getEmail().equals(JwtDecoder.pegaEmail(token));
     }
 }

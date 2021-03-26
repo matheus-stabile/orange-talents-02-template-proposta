@@ -1,10 +1,17 @@
 package com.github.matheusstabile.nossocartao.proposta.propostas;
 
 import com.github.matheusstabile.nossocartao.proposta.cartoes.Cartao;
+import com.github.matheusstabile.nossocartao.proposta.compartilhado.seguranca.Crypto;
+import com.github.matheusstabile.nossocartao.proposta.compartilhado.seguranca.JwtDecoder;
+import com.github.matheusstabile.nossocartao.proposta.compartilhado.validacoes.CPFouCNPJ;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
 @Entity
@@ -14,18 +21,25 @@ public class Proposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(nullable = false, unique = true)
     private String documento;
 
+    @NotBlank
+    @Email
     @Column(nullable = false)
     private String email;
 
+    @NotBlank
     @Column(nullable = false)
     private String nome;
 
+    @NotBlank
     @Column(nullable = false)
     private String endereco;
 
+    @NotNull
+    @Positive
     @Column(nullable = false)
     private BigDecimal salario;
 
@@ -36,13 +50,7 @@ public class Proposta {
     private Cartao cartao;
 
 
-    public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
-        Assert.isTrue(StringUtils.hasText(documento), "Documento não pode estar em branco");
-        Assert.isTrue(StringUtils.hasText(email), "Email não pode estar em branco");
-        Assert.isTrue(StringUtils.hasText(nome), "Nome não pode estar em branco");
-        Assert.isTrue(StringUtils.hasText(endereco), "Endereço não pode estar em branco");
-        Assert.isTrue(salario.compareTo(BigDecimal.ZERO) > 0, "Salário deve ser positivo");
-
+    public Proposta(@NotBlank String documento, @NotBlank @Email String email, @NotBlank String nome, @NotBlank String endereco, @NotNull @Positive BigDecimal salario) {
         this.documento = documento;
         this.email = email;
         this.nome = nome;
@@ -80,7 +88,7 @@ public class Proposta {
     }
 
     public void atualizaStatusAnalise(PropostaStatus propostaStatus) {
-        Assert.isTrue(!this.propostaStatus.equals(PropostaStatus.ELEGIVEL), "a proposta já é elegivel");
+        Assert.isTrue(this.propostaStatus.equals(PropostaStatus.NAO_PROCESSADO), "a proposta já foi processada");
 
         this.propostaStatus = propostaStatus;
     }
@@ -90,5 +98,15 @@ public class Proposta {
         Assert.isNull(this.cartao, "já existe um cartão associado a essa proposta");
 
         this.cartao = cartao;
+    }
+
+    public boolean pertenceAoUsuario(String token) {
+        Assert.isTrue(StringUtils.hasText(token), "token não pode estar em branco");
+
+        return this.email.equals(JwtDecoder.pegaEmail(token));
+    }
+
+    public void encriptaDocumento() {
+        documento = Crypto.encrypt(documento);
     }
 }

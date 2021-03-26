@@ -7,7 +7,7 @@ public class AnaliseFinanceiraResponse {
 
     private String nome;
 
-    private String resultadoSolicitacao;
+    private AnaliseFinanceiraReponseStatus resultadoSolicitacao;
 
     private String idProposta;
 
@@ -19,8 +19,12 @@ public class AnaliseFinanceiraResponse {
         return nome;
     }
 
-    public String getResultadoSolicitacao() {
+    public AnaliseFinanceiraReponseStatus getResultadoSolicitacao() {
         return resultadoSolicitacao;
+    }
+
+    public void setResultadoSolicitacao(AnaliseFinanceiraReponseStatus resultadoSolicitacao) {
+        this.resultadoSolicitacao = resultadoSolicitacao;
     }
 
     public String getIdProposta() {
